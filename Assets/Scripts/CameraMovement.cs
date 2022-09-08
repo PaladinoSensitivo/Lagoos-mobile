@@ -8,8 +8,8 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]private float speed;
     [SerializeField]private TouchCamera touchCamera;
     private Transform currentPos;
-    private Vector3 velocity = new Vector3 (1, 0, 0);
-    private bool isMoving, isRotating;
+    private Vector3 velocity = Vector3.zero;
+    private bool isMoving;
 
     private bool gyroEnabled;
     private Gyroscope gyro;
@@ -42,18 +42,18 @@ public class CameraMovement : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Backspace)) {
             isMoving = true;
-            isRotating = true;
             currentPos = start;
             touchCamera.enabled = true;
             gyro.enabled = false;
             cameraContainer.transform.rotation = currentPos.rotation;
+            transform.localRotation = currentPos.rotation;
             
         }
 		#endregion
 
 		#region Position
-		if(isMoving && transform.position != currentPos.position ) {
-            transform.position = Vector3.SmoothDamp(transform.position, currentPos.position, ref velocity, speed * Time.deltaTime);
+		if(isMoving && cameraContainer.transform.position != currentPos.position ) {
+            cameraContainer.transform.position = Vector3.SmoothDamp(cameraContainer.transform.position, currentPos.position, ref velocity, speed * Time.deltaTime);
         }
 		else {
             isMoving = false;
