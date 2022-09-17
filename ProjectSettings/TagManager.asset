@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Cabinet
+  - Desk
+  - Bed
+  - Stand
+  - Shelf
   layers:
   - Default
   - TransparentFX

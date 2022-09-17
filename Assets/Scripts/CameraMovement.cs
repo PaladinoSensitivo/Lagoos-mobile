@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
+    [SerializeField]private Transform[] targetPosition;
     [SerializeField]private Transform target, start;
     [SerializeField]private float speed;
     [SerializeField]private TouchCamera touchCamera;
     private Transform currentPos;
     private Vector3 velocity = Vector3.zero;
-    private bool isMoving, isReturning, gyroEnabled;
-
+    private bool isMoving, gyroEnabled;
+    public bool isReturning;
     private Gyroscope gyro;
-
     private GameObject cameraContainer;
 
     RaycastHit hit;
@@ -21,7 +21,9 @@ public class CameraMovement : MonoBehaviour
         cameraContainer = new GameObject("Camera Container");
         cameraContainer.transform.position = transform.position;
         transform.SetParent(cameraContainer.transform);
-	}
+
+        gyro = Input.gyro;
+    }
 
 	void Update()
     {
@@ -41,14 +43,32 @@ public class CameraMovement : MonoBehaviour
                 Ray ray = Camera.main.ScreenPointToRay(pos);
 
                 if(Physics.Raycast(ray, out hit)) {
-                    if(hit.collider.tag == "Cabinet") {
-                        isMoving = true;
-                        currentPos = target;
-                        touchCamera.enabled = false;
-                        gyroEnabled = EnableGyro();
-
-                        cameraContainer.transform.rotation = target.rotation;
-
+					switch(hit.collider.tag) {
+                        case "Cabinet":
+                            currentPos = targetPosition[0];
+                            cameraContainer.transform.rotation = targetPosition[0].rotation;
+                            SwitchPosition();
+                            break;
+                        case "Desk":
+                            currentPos = targetPosition[1];
+                            cameraContainer.transform.rotation = targetPosition[1].rotation;
+                            SwitchPosition();
+                            break;
+                        case "Bed":
+                            currentPos = targetPosition[2];
+                            cameraContainer.transform.rotation = targetPosition[2].rotation;
+                            SwitchPosition();
+                            break;
+                        case "Stand":
+                            currentPos = targetPosition[3];
+                            cameraContainer.transform.rotation = targetPosition[3].rotation;
+                            SwitchPosition();
+                            break;
+                        case "Shelf":
+                            currentPos = targetPosition[4];
+                            cameraContainer.transform.rotation = targetPosition[4].rotation;
+                            SwitchPosition();
+                            break;
                     }
 			    }
 		    }
@@ -72,25 +92,28 @@ public class CameraMovement : MonoBehaviour
         currentPos = start;
         touchCamera.enabled = true;
         cameraContainer.transform.rotation = currentPos.rotation;
+        transform.rotation = Quaternion.Euler(30f, 45f, 0f);
+        gyroEnabled = EnableGyro();
+    }
+
+    void SwitchPosition() {
+        isMoving = true;
+        isReturning = false;
+        touchCamera.enabled = false;
         gyroEnabled = EnableGyro();
     }
 
     private bool EnableGyro() {
         if(hit.collider != null) {
 
-            if(hit.collider.tag == "Cabinet") {      
-                gyro = Input.gyro;
-                gyro.enabled = true;
-
+            if(isReturning == false) {      
                 
-
+                gyro.enabled = true;
                 return true;
             }
 		}
         else if(isReturning == true) {      
-            gyro.enabled = false;
-            isReturning = false;
-            transform.rotation = Quaternion.Euler(30f, 45f, 0f);
+            gyro.enabled = false;           
             return false;
 		}
         return false;
