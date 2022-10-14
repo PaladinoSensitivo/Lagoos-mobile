@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
     [SerializeField]private GameObject _tutorial;
     void Start()
     {
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
     }
 
 
@@ -16,4 +16,5 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
         _tutorial.SetActive(false);
     }
+
 }

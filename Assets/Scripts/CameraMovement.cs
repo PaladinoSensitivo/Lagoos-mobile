@@ -5,13 +5,13 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     [SerializeField]private Transform[] targetPosition;
-    [SerializeField]private Transform target, start;
+    [SerializeField]private Transform start;
     [SerializeField]private float speed;
     [SerializeField]private TouchCamera touchCamera;
+    [SerializeField]private CabinetDoors cabinetDoors;
     private Transform currentPos;
     private Vector3 velocity = Vector3.zero;
-    private bool isMoving, gyroEnabled;
-    public bool isReturning;
+    private bool isMoving, gyroEnabled, isReturning;
     private Gyroscope gyro;
     private GameObject cameraContainer;
 
@@ -21,7 +21,7 @@ public class CameraMovement : MonoBehaviour
         cameraContainer = new GameObject("Camera Container");
         cameraContainer.transform.position = transform.position;
         transform.SetParent(cameraContainer.transform);
-
+        cabinetDoors.enabled = false;
         gyro = Input.gyro;
     }
 
@@ -30,7 +30,6 @@ public class CameraMovement : MonoBehaviour
 
         if(gyroEnabled) {
             transform.localRotation = GyroToUnity(gyro.attitude);
-            Debug.Log("Gyro on");
         }
         MoveCamera();
 
@@ -39,7 +38,7 @@ public class CameraMovement : MonoBehaviour
 		    Touch touch = Input.GetTouch(0);
 		    Vector3 pos = touch.position;
 
-            if(touch.phase == TouchPhase.Began) {
+            if(touch.phase == TouchPhase.Ended) {
                 Ray ray = Camera.main.ScreenPointToRay(pos);
 
                 if(Physics.Raycast(ray, out hit)) {
@@ -47,6 +46,19 @@ public class CameraMovement : MonoBehaviour
                         case "Cabinet":
                             currentPos = targetPosition[0];
                             cameraContainer.transform.rotation = targetPosition[0].rotation;
+                            StartCoroutine("OpenDoor");
+                            SwitchPosition();
+                            break;
+                        case "LeftDoor":
+                            currentPos = targetPosition[0];
+                            cameraContainer.transform.rotation = targetPosition[0].rotation;
+                            StartCoroutine("OpenDoor");
+                            SwitchPosition();
+                            break;
+                        case "RightDoor":
+                            currentPos = targetPosition[0];
+                            cameraContainer.transform.rotation = targetPosition[0].rotation;
+                            StartCoroutine("OpenDoor");
                             SwitchPosition();
                             break;
                         case "Desk":
@@ -87,6 +99,7 @@ public class CameraMovement : MonoBehaviour
     }
 
     public void ReturnCamera() {
+        cabinetDoors.enabled = false;
         isMoving = true;
         isReturning = true;
         currentPos = start;
@@ -124,5 +137,10 @@ public class CameraMovement : MonoBehaviour
             q.y,
             -q.z,
             -q.w);
+    }
+
+    IEnumerator OpenDoor() {
+        yield return new WaitForSeconds(0.5f);
+        cabinetDoors.enabled = true;
     }
 }

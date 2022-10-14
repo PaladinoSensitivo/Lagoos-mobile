@@ -9,6 +9,9 @@ TagManager:
   - Bed
   - Stand
   - Shelf
+  - LeftDoor
+  - RightDoor
+  - Lampada
   layers:
   - Default
   - TransparentFX

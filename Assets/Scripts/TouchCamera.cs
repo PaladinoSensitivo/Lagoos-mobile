@@ -6,8 +6,10 @@ public class TouchCamera : MonoBehaviour
 {
     [SerializeField]
     private float speedRotation;
+    private bool onInterface;
     void Update()
     {
+        if(onInterface) return;
         if(Input.touchCount == 1) {
             Touch screenTouch = Input.GetTouch(0);
             if(screenTouch.phase == TouchPhase.Moved) {
@@ -17,5 +19,11 @@ public class TouchCamera : MonoBehaviour
 
 	    }
 
+    }
+    public void OnInterface() {
+        onInterface = true;
+	}
+    public void OutInterface() {
+        onInterface = false;
     }
 }
